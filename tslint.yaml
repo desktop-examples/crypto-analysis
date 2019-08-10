@@ -1,0 +1,20 @@
+---
+extends: "tslint:all"
+rules:
+  align: false
+  arrow-return-shorthand: true
+  completed-docs: false
+  no-default-export: false
+  max-line-length:
+    options: [140]
+  prefer-function-over-method: false
+  no-implicit-dependencies: [true, "dev"]
+  no-import-side-effect: false
+  no-inferred-empty-object-type: false
+  no-magic-numbers: false
+  no-non-null-assertion: false
+  no-submodule-imports: false
+  no-unused-variable: false
+  strict-comparisons: false
+  typedef: false
+  variable-name: false
