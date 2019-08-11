@@ -11,7 +11,7 @@ metadata:
   name: Crypto Analysis
   description: Visualisation of Crypto Exchange
 spec:
-  url: https://reactive-os-examples.github.io/crypto-analysis/
+  url: https://desktop-examples.github.io/crypto-analysis/
   window:
     autoHideMenuBar: true
     backgroundColor: "#1d1d26"
