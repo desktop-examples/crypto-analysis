@@ -35,7 +35,7 @@
     "moment": "^2.24.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
-    "react-flexview": "^4.0.3",
+    "react-flexview": "^4.0.4",
     "react-sizeme": "^2.6.7",
     "react-stockcharts": "^0.7.8"
   },
