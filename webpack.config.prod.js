@@ -14,7 +14,12 @@ module.exports = merge({
                 parallel: true,
                 terserOptions: {
                     ecma: 6,
-                },
+                    mangle: true,
+                    output: {
+                        comments: false,
+                    },
+                    warnings: false,
+                }
             }),
             new OptimizeCSSAssetsPlugin({
                 cssProcessorPluginOptions: {
@@ -43,7 +48,7 @@ module.exports = merge({
                     match: function (_) {
                         return new URL("/", location);
                     },
-                    requestTypes: ["same-origin"]
+                    requestTypes: ["navigate"]
                 }],
                 ServiceWorker: {
                     events: true,
