@@ -2,7 +2,6 @@ import * as debug from "debug";
 import * as moment from "moment";
 import * as qs from "querystring";
 
-import { ICryptoCompareExchanges } from "./iCryptoCompareExchanges";
 import { IExchangeVolumeData } from "./iExchangeVolumeData";
 import { IHistoricalPriceStore } from "./iHistoricalPriceStore";
 
@@ -11,13 +10,12 @@ const logger = debug("stock-chart:store:prices");
 export class CryptoCompareHistoricalPriceStore implements IHistoricalPriceStore {
 
     private readonly basePriceUrl = "https://min-api.cryptocompare.com/data/histoday";
-    private readonly exchangeUrl = "https://min-api.cryptocompare.com/data/all/exchanges";
-    private readonly rateLimit = 20;
+    private readonly exchanges = ["Bitfinex", "Bitstamp", "Coinbase", "Gemini", "Kraken"];
     private readonly symbolLength = 3;
 
     public async getExchangeVolumeData(symbol: string) {
 
-        logger(`fetching all exchanges from ${this.exchangeUrl}`);
+        logger(`fetching all volumes from ${this.basePriceUrl}`);
 
         const base = symbol.slice(0, this.symbolLength);
         const term = symbol.slice(this.symbolLength);
@@ -28,46 +26,8 @@ export class CryptoCompareHistoricalPriceStore implements IHistoricalPriceStore 
             tsym: term,
         });
 
-        return fetch(this.exchangeUrl)
-            .then(async (response) => {
-                if (response.ok) {
-                    return response.json();
-                }
-
-                throw new Error(response.statusText);
-            })
-            .then((exchangeData: ICryptoCompareExchanges) => {
-
-                const exchanges: string[] = [];
-
-                for (const exchange in exchangeData) {
-                    if (exchangeData.hasOwnProperty(exchange)) {
-                        const pairs = exchangeData[exchange];
-                        const containsBase = Object
-                            .keys(pairs)
-                            .some((basePair) => basePair === base);
-                        if (containsBase) {
-                            const containsTerm = pairs[base].some((termPair) => termPair === term);
-                            if (containsTerm) {
-                                exchanges.push(exchange);
-                            }
-                        }
-                    }
-                }
-
-                return exchanges
-                    .sort((a, b) => {
-                        if (a < b) {
-                            return -1;
-                        }
-                        if (a > b) {
-                            return 1;
-                        }
-
-                        return 0;
-                    })
-                    .slice(0, this.rateLimit);
-            })
+        return Promise
+            .resolve(this.exchanges)
             .then(async (exchanges) => {
 
                 const promises = exchanges
@@ -90,9 +50,13 @@ export class CryptoCompareHistoricalPriceStore implements IHistoricalPriceStore 
                                     return history;
                                 }
 
-                                throw new Error(history.Message);
+                                return undefined;
                             })
-                            .then((history: ICryptoCompareHistoricalData) => {
+                            .then((history: ICryptoCompareHistoricalData | undefined) => {
+
+                                if (history === undefined) {
+                                    return [];
+                                }
 
                                 return history
                                     .Data
